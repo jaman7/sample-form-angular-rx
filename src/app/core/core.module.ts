@@ -7,7 +7,6 @@ import { MissingTranslationHandler, TranslateLoader, TranslateModule } from '@ng
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { APP_INITIALIZER, Injector, NgModule, Optional, SkipSelf } from '@angular/core';
 import { RouterStateSerializer, StoreRouterConnectingModule } from '@ngrx/router-store';
-import { RxState } from '@rx-angular/state';
 import { metaReducers, reducers } from './core.state';
 import { LanguageEffects } from './language/store';
 import * as build from '../../environments/build.json';
@@ -21,7 +20,6 @@ import { LocalStorageService } from './local-storage/local-storage.service';
 import { ServiceLocator } from './locator/locator.service';
 import { RouterSerializer } from './router/router-serializer';
 import { HttpClientModule } from './http/httpclient.module';
-import { GLOBAL_RX_STATE, GlobalState } from './store/global-store';
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   const buildJSON = build;
@@ -68,7 +66,6 @@ export function initializeLanguageService(languageService: LanguageService) {
       deps: [LanguageService],
       multi: true,
     },
-    { provide: GLOBAL_RX_STATE, useFactory: (): RxState<GlobalState> => new RxState<GlobalState>() },
   ],
   exports: [TranslateModule, HttpClientModule],
 })
@@ -80,7 +77,7 @@ export class CoreModule {
     parentModule: CoreModule
   ) {
     if (parentModule) {
-      throw new Error('CoreModule is already loaded. Import only in AppModule');
+      throw new Error('CoreModule is already loaded.');
     }
     ServiceLocator.injector = this.injector;
   }
