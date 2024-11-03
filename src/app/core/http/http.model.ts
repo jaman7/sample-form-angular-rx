@@ -2,7 +2,7 @@ import { HttpHeaders } from '@angular/common/http';
 
 export type HttpObserveType = 'body' | 'events' | 'response';
 
-export interface ParamsDTO {
+export interface IParams {
   [param: string]: number | number[] | string | string[] | boolean | boolean[];
 }
 
@@ -11,7 +11,7 @@ export class HttpOptions {
 
   observe?: 'body';
 
-  params?: ParamsDTO;
+  params?: IParams;
 
   reportProgress?: boolean;
 

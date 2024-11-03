@@ -1,20 +1,18 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import memo from 'memo-decorator';
 
-interface KeyValue {
+interface KeyValue<T> {
   key: string;
-  value: any[];
+  value: T;
 }
 
 @Pipe({
   name: 'objectToArray',
 })
 export class ObjectToArrayPipe implements PipeTransform {
-  transform(value: { [key: string]: any } | null | undefined): KeyValue[] {
-    if (value == null) {
-      return [];
-    }
-
+  @memo()
+  transform<T>(value: { [key: string]: T } | null | undefined): KeyValue<T>[] {
+    if (value === null) return [];
     return Object.keys(value).map(key => ({ key, value: value[key] }));
   }
 }

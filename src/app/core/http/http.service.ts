@@ -1,54 +1,69 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
 import { environment as env } from '@env/environment';
 import { toHttpParams } from './http.utils';
-import { HttpOptions, HttpRequestOptions, ParamsDTO } from './http.model';
+import { HttpOptions, HttpRequestOptions, IParams } from './http.model';
 
 @Injectable()
 export abstract class HttpService {
   constructor(public http: HttpClient) {}
 
-  protected get<T>(url: string, options: HttpOptions = {}): Observable<T> {
-    return this.http.get<T>(env.SERVER_API_URL + url, {
+  private createUrl(url: string, useFullUrl: boolean): string {
+    return useFullUrl ? url : env.SERVER_API_URL + url;
+  }
+
+  protected get<T>(url: string, options: HttpOptions = {}, useFullUrl: boolean = false): Observable<T> {
+    const finalUrl = this.createUrl(url, useFullUrl);
+    return this.http.get<T>(finalUrl, {
       ...options,
-      params: toHttpParams(options.params as ParamsDTO),
+      params: toHttpParams(options.params as IParams),
     });
   }
 
-  protected post<T>(url: string, data: any, options: HttpOptions = {}): Observable<T> {
-    return this.http.post<T>(env.SERVER_API_URL + url, data, {
+  protected post<T>(url: string, data: any, options: HttpOptions = {}, useFullUrl: boolean = false): Observable<T> {
+    const finalUrl = this.createUrl(url, useFullUrl);
+    return this.http.post<T>(finalUrl, data, {
       ...options,
-      params: toHttpParams(options.params as ParamsDTO),
+      params: toHttpParams(options.params as IParams),
     });
   }
 
-  protected patch<T>(url: string, data: any, options: HttpOptions = {}): Observable<T> {
-    return this.http.patch<T>(env.SERVER_API_URL + url, data, {
+  protected patch<T>(url: string, data: any, options: HttpOptions = {}, useFullUrl: boolean = false): Observable<T> {
+    const finalUrl = this.createUrl(url, useFullUrl);
+    return this.http.patch<T>(finalUrl, data, {
       ...options,
-      params: toHttpParams(options.params as ParamsDTO),
+      params: toHttpParams(options.params as IParams),
     });
   }
 
-  protected put<T>(url: string, data: any, options: HttpOptions = {}): Observable<T> {
-    return this.http.put<T>(env.SERVER_API_URL + url, data, {
+  protected put<T>(url: string, data: any, options: HttpOptions = {}, useFullUrl: boolean = false): Observable<T> {
+    const finalUrl = this.createUrl(url, useFullUrl);
+    return this.http.put<T>(finalUrl, data, {
       ...options,
-      params: toHttpParams(options.params as ParamsDTO),
+      params: toHttpParams(options.params as IParams),
     });
   }
 
-  protected delete<T>(url: string, options: HttpOptions = {}): Observable<T> {
-    return this.http.delete<T>(env.SERVER_API_URL + url, {
+  protected delete<T>(url: string, options: HttpOptions = {}, useFullUrl: boolean = false): Observable<T> {
+    const finalUrl = this.createUrl(url, useFullUrl);
+    return this.http.delete<T>(finalUrl, {
       ...options,
-      params: toHttpParams(options.params as ParamsDTO),
+      params: toHttpParams(options.params as IParams),
     });
   }
 
-  protected response(method: string, url: string, options: HttpRequestOptions = {}): Observable<any> {
-    return this.http.request(method, env.SERVER_API_URL + url, {
+  protected response(method: string, url: string, options: HttpRequestOptions = {}, useFullUrl: boolean = false): Observable<any> {
+    const finalUrl = this.createUrl(url, useFullUrl);
+    return this.http.request(method, finalUrl, {
       ...options,
       body: options.body,
-      params: toHttpParams(options.params as ParamsDTO),
+      params: toHttpParams(options.params as IParams),
     });
+  }
+
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    console.error('API call error:', error);
+    return throwError('An error occurred while communicating with the server.');
   }
 }

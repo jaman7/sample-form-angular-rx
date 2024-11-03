@@ -10,10 +10,10 @@ import { OpenDocTypeEnum } from '@app/shared/enums';
 import { TableButtonsOpenType } from '@app/components/commons/table/table.enums';
 import { getMaxIdByKey, removeById } from '@app/shared/utils/arrays-utils';
 import { RxState } from '@rx-angular/state';
-import { GLOBAL_RX_STATE, GlobalState } from '@app/core/store/global-store';
 import { IPeriodicElements } from './home.model';
 import { HomeService } from './home.service';
 import { TableEditComponent } from './table-edit/table-edit.component';
+import { GLOBAL_RX_STATE, GlobalState } from '@app/core/store/global-store';
 
 const { ADD } = OpenDocTypeEnum;
 const { DELETE } = TableButtonsOpenType;
@@ -44,8 +44,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.globalState
       .select('periodicElements')
-      .pipe(map(data => data?.map((el, i) => ({ id: i + 1, ...el })) ?? []))
-      .subscribe(elements => {
+      .pipe(map((data) => data?.map((el, i) => ({ id: i + 1, ...el })) ?? []))
+      .subscribe((elements) => {
         this.data = elements;
       });
   }
@@ -77,7 +77,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   updateTableRow(row: IPeriodicElements): void {
     const { id } = row || {};
     if (id) {
-      this.data = this.data?.map(el => (el.id === row.id ? row : el)) ?? [];
+      this.data = this.data?.map((el) => (el.id === row.id ? row : el)) ?? [];
     } else {
       this.data = [...this.data, { ...row, id: getMaxIdByKey(this.data) }];
     }
